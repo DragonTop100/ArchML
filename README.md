@@ -10,3 +10,8 @@ Implementation of some fundamental machine learning models and algorithms in Pyt
   * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
+
+## Implementations
+### Supervised Learning
+
+### Unsupervised Learning
