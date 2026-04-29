@@ -1,6 +1,4 @@
 venv/
 .venv/
 
-data/
-
 .ipynb_checkpoints/
