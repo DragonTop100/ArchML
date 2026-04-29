@@ -36,4 +36,4 @@ def predprocessing_data(data_dir='../data/politicians', batch_size=4):
         device = "cpu"
     print(f"Using {device} device")
 
-    return dataloaders, dataset_sizes, class_names, device
+    return data_transforms, dataloaders, dataset_sizes, class_names, device
