@@ -4,7 +4,7 @@ import torchvision
 from torch.optim import lr_scheduler
 
 
-def initialize_model(num_classes, device):
+def initialize_model(device):
     model_conv = torchvision.models.resnet18(weights='IMAGENET1K_V1')
     for param in model_conv.parameters():
         param.requires_grad = False
