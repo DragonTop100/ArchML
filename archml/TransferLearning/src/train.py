@@ -1,10 +1,11 @@
-from dataset
 import os
 import time
 import torch
 from tempfile import TemporaryDirectory
 
-def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
+
+def train_model(model, criterion, optimizer, scheduler, dataloaders,
+                dataset_sizes, device, num_epochs=25):
     since = time.time()
 
     with TemporaryDirectory() as tempdir:
@@ -48,13 +49,13 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
 
                 epoch_loss = running_loss / dataset_sizes[phase]
                 epoch_acc = running_corrects.double() / dataset_sizes[phase]
-                
+
                 print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
                 if phase == 'val' and epoch_acc > best_acc:
                     best_acc = epoch_acc
                     torch.save(model.state_dict(), best_model_params_path)
-            
+
             print()
 
         time_elapsed = time.time() - since
