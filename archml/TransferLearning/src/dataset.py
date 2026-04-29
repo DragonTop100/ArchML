@@ -3,7 +3,7 @@ import torch
 from torchvision import datasets, transforms
 
 
-def predprocessing_data(data_dir='data/politicians', batch_size=4):
+def predprocessing_data(data_dir='../data/politicians', batch_size=4):
     data_transforms = {
         'train': transforms.Compose([
             transforms.RandomResizedCrop(224),
