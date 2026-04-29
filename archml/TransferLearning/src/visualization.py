@@ -59,7 +59,7 @@ def visualize_model_predictions(model, data_transforms, class_names,
         outputs = model(img)
         _, preds = torch.max(outputs, 1)
 
-        ax = plt.subplots(2, 2, 1)
+        ax = plt.subplot(2, 2, 1)
         ax.axis('off')
         ax.set_title(f'Predicted: {class_names[preds[0]]}')
         imshow(img.cpu().data[0])
