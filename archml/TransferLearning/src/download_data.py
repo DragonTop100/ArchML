@@ -3,10 +3,10 @@ from icrawler.builtin import GoogleImageCrawler
 
 
 def download_politicians(politicians, samples_per_person=100):
-    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__,
-                                                             '..',
-                                                             'data',
-                                                             'politicians')))
+    base_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                             '..',
+                                             'data',
+                                             'politicians'))
     for politician in politicians:
         save_path = os.path.join(base_path,
                                  'train',
