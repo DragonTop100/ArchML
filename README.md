@@ -25,4 +25,4 @@ Implementation of some fundamental machine learning models and algorithms in Pyt
 - [Clustering Algorithms](archml/ML_Clustering_Algorithms.ipynb) - Implementation KMeans, DBSCAN and applying Agglomerative Clustering and Gaussian Mixture Models.
 
 ### Deep Learning
-- [Transfer Learning](archml/TransferLearing/visualization/visualization.ipynb) - A model for recognizing the faces of politicians
+- [Transfer Learning](archml/TransferLearning/visualization/visualization.ipynb) - A model for recognizing the faces of politicians
