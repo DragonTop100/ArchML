@@ -20,8 +20,10 @@ def download_politicians(politicians, samples_per_person=100, val_ratio=0.2):
         print(f'Uploading images for {politician}')
 
         google_crawler = BingImageCrawler(storage={'root_dir': train_path})
-        google_crawler.crawl(keyword=f'{politician} face portrait',
-                             max_num=samples_per_person)
+        google_crawler.crawl(
+                keyword=f'{politician} official portrait face close up',
+                max_num=samples_per_person
+        )
 
         images = [
                 f for f in os.listdir(train_path)
