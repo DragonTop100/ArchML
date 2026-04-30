@@ -10,6 +10,7 @@ Implementation of some fundamental machine learning models and algorithms in Pyt
   * [Implementations](#implementations)
     + [Supervised Learning](#supervised-learning)
     + [Unsupervised Learning](#unsupervised-learning)
+    + [Deep Learning](#deep-learning)
 
 ## Implementations
 ### Supervised Learning
@@ -21,4 +22,7 @@ Implementation of some fundamental machine learning models and algorithms in Pyt
 
 ### Unsupervised Learning
 - [Dimensionality Reduction and Clustering](archml/ML_Dimensionality_Reduction_and_Clustering.ipynb) - Data compression and visualization. Applying PCA, SVD, and UMAP to high-dimensional datasets.
-- [Clustering Algorithms](archml/ML_Clustering_Algorithms.ipynb) - Implementation KMeans, DBSCAN and applying Agglomerative Clustering and Gaussian Mixture Models. 
+- [Clustering Algorithms](archml/ML_Clustering_Algorithms.ipynb) - Implementation KMeans, DBSCAN and applying Agglomerative Clustering and Gaussian Mixture Models.
+
+### Deep Learning
+- [Transfer Learning](archml/TransferLearing/visualization/visualization.ipynb) - A model for recognizing the faces of politicians
