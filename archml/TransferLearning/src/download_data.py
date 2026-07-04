@@ -1,41 +1,25 @@
 import os
-import random
-import shutil
 from icrawler.builtin import BingImageCrawler
 
 
-def download_politicians(politicians, samples_per_person=100, val_ratio=0.2):
+def download_politicians(politicians, samples_per_person=150):
     base_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                              '..',
                                              'data',
-                                             'politicians'))
+                                             'politicians',
+                                             'raw'))
     for politician in politicians:
         name = politician.lower().replace(' ', '_')
-        train_path = os.path.join(base_path, 'train', name)
-        val_path = os.path.join(base_path, 'val', name)
-
-        os.makedirs(train_path, exist_ok=True)
-        os.makedirs(val_path, exist_ok=True)
+        person_path = os.path.join(base_path, name)
+        os.makedirs(person_path, exist_ok=True)
 
         print(f'Uploading images for {politician}')
 
-        google_crawler = BingImageCrawler(storage={'root_dir': train_path})
-        google_crawler.crawl(
+        crawler = BingImageCrawler(storage={'root_dir': person_path})
+        crawler.crawl(
                 keyword=f'{politician} official portrait face close up',
-                max_num=samples_per_person
+                max_num=samples_per_person,
+                filters={'size': 'large'}
         )
-
-        images = [
-                f for f in os.listdir(train_path)
-                if os.path.isfile(os.path.join(train_path, f))
-        ]
-
-        val_count = int(len(images) * val_ratio)
-        to_move = random.sample(images, val_count)
-
-        for filename in to_move:
-            train = os.path.join(train_path, filename)
-            val = os.path.join(val_path, filename)
-            shutil.move(train, val)
 
     print('All images have been downloaded')
