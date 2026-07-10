@@ -124,18 +124,28 @@ def _build_clip(device):
     return model, processor
 
 
+def _clip_text_embedding(model, text_inputs):
+    text_outputs = model.text_model(**text_inputs)
+    projected = model.text_projection(text_outputs.pooler_output)
+    return F.normalize(projected, dim=-1)
+
+
+def _clip_image_embedding(model, image_inputs):
+    vision_outputs = model.vision_model(**image_inputs)
+    projected = model.visual_projection(vision_outputs.pooler_output)
+    return F.normalize(projected, dim=-1)
+
+
 def filter_by_clip(directory, prompt, threshold=0.25, device='cpu',
                    clip=None, verbose=True):
     directory = Path(directory)
     model, processor = clip or _build_clip(device)
 
     text_inputs = processor(
-            text=[prompt], return_tensors='pt', padding=True
+        text=[prompt], return_tensors='pt', padding=True
     ).to(device)
     with torch.no_grad():
-        text_features = F.normalize(
-                model.get_text_features(**text_inputs), dim=-1
-        )
+        text_features = _clip_text_embedding(model, text_inputs)
 
     removed, total = 0, 0
     files = [x for x in directory.iterdir() if x.is_file()]
@@ -146,9 +156,7 @@ def filter_by_clip(directory, prompt, threshold=0.25, device='cpu',
 
         image_inputs = processor(images=img, return_tensors='pt').to(device)
         with torch.no_grad():
-            image_features = F.normalize(
-                    model.get_image_features(**image_inputs), dim=-1
-            )
+            image_features = _clip_image_embedding(model, image_inputs)
         similarity = (image_features @ text_features.T).item()
 
         if similarity < threshold:
