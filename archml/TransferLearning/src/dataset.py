@@ -1,9 +1,12 @@
 import os
+import random
+
 import torch
 from torchvision import datasets, transforms
 
 
-def predprocessing_data(data_dir='../data/politicians', batch_size=4):
+def predprocessing_data(data_dir='../data/politicians', batch_size=4,
+                        subset_fraction=1.0, seed=42):
     data_transforms = {
         'train': transforms.Compose([
             transforms.RandomResizedCrop(224),
@@ -19,16 +22,31 @@ def predprocessing_data(data_dir='../data/politicians', batch_size=4):
         ]),
     }
 
-    image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
-                                              data_transforms[x])
-                      for x in ['train', 'val']}
+    full_datasets = {}
+    for split in ['train', 'val']:
+        full_datasets[split] = datasets.ImageFolder(
+            os.path.join(data_dir, split),
+            data_transforms[split],
+            allow_empty=True
+        )
+    class_names = full_datasets['train'].classes
+
+    image_datasets = dict(full_datasets)
+    if subset_fraction < 1.0:
+        random.seed(seed)
+        n_total = len(full_datasets['train'])
+        n_subset = max(1, int(n_total * subset_fraction))
+        indices = random.sample(range(n_total), n_subset)
+        image_datasets['train'] = torch.utils.data.Subset(
+            full_datasets['train'], indices
+        )
+
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x],
                                                   batch_size=batch_size,
                                                   shuffle=True,
                                                   num_workers=4)
                    for x in ['train', 'val']}
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
-    class_names = image_datasets['train'].classes
 
     if torch.accelerator.is_available():
         device = torch.accelerator.current_accelerator().type
