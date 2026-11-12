@@ -14,10 +14,10 @@ PEOPLE = [
     'Sanae Takaichi',
     'Vladimir Putin',
     'Javier Milei',
-    'Lee Jae-myung',
+    'Lee Jae Myung',
     'Claudia Sheinbaum',
     'Mark Carney',
-    'Mohammed bin Salman'
+    'Mohammed bin Salman Al Saud'
 ]
 
 TARGET = 500
