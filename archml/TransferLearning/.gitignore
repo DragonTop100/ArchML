@@ -1,3 +1,15 @@
+.venv/
+venv/
+
 data/
+
+checkpoints/
+*.pth
+*.pt
+
+results/
+
 __pycache__/
+*.py[cod]
+
 .ipynb_checkpoints/
