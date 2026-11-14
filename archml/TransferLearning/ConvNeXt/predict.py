@@ -8,10 +8,12 @@ import torch.nn as nn
 from PIL import Image
 from torchvision.models import convnext_base, ConvNeXt_Base_Weights
 
+from src.dataset import load_fmd
+
 
 BASE_DIR = Path(__file__).resolve().parent
 CHECKPOINT = BASE_DIR / "checkpoints/convnext_base.pth"
-VAL_DIR = BASE_DIR / "data/politicians/val"
+VAL_DIR = BASE_DIR / "data/val"
 RESULT_DIR = BASE_DIR / "results"
 
 
@@ -64,20 +66,32 @@ def visualize_predictions(paths, model, class_names, device):
     )
 
     for ax, path in zip(axes[0], paths):
-        with Image.open(path) as source:
-            image = source.convert("RGB")
+        if isinstance(path, dict):
+            image = path["image"].convert("RGB")
+            true_class = class_names[path["label"]]
+            image_name = path["image_id"]
+        else:
+            with Image.open(path) as source:
+                image = source.convert("RGB")
+            split_dirs = (VAL_DIR.resolve(), (VAL_DIR.parent / "train").resolve())
+            true_class = path.parent.name if (
+                path.parent.parent.resolve() in split_dirs and path.parent.name in class_names
+            ) else None
+            image_name = path.name
 
         prediction, confidence = predict_image(
             model, image, class_names, device
         )
 
+        title = f"{prediction}\nConfidence: {confidence:.1%}"
+        if true_class is not None:
+            title = f"True: {true_class}\n{title}"
+
         ax.imshow(image)
-        ax.set_title(
-            f"{prediction}\nConfidence: {confidence:.1%}"
-        )
+        ax.set_title(title)
         ax.axis("off")
 
-        print(f"{path.name}: {prediction} ({confidence:.1%})")
+        print(f"{image_name}: {prediction} ({confidence:.1%})")
 
     RESULT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -107,17 +121,18 @@ def main():
         if args.random < 1:
             parser.error("Количество должно быть положительным")
 
-        images = sorted(
-            p for p in VAL_DIR.rglob("*")
-            if p.suffix.lower() in {".jpg", ".jpeg", ".png"}
-        )
+        datasets, dataset_classes = load_fmd()
+        images = datasets["val"]
 
         if len(images) < args.random:
             parser.error("Недостаточно изображений в val")
 
-        paths = random.sample(images, args.random)
+        paths = [images[i] for i in random.sample(range(len(images)), args.random)]
 
     model, class_names, device = load_model()
+
+    if args.random is not None and class_names != dataset_classes:
+        parser.error("Классы checkpoint не совпадают с классами FMD")
 
     visualize_predictions(
         paths, model, class_names, device

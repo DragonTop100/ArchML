@@ -2,38 +2,24 @@ from pathlib import Path
 
 import torch
 
-from src.download_data import download_politicians
-from src.dataset import split_train_val, predprocessing_data
+from src.dataset import predprocessing_data
 from src.model_builder import initialize_model
 from src.train import train_model
 
-
-DOWNLOAD_DATA = True
-SPLIT_DATA = True
 
 BATCH_SIZE = 4
 NUM_EPOCHS = 25
 
 
 def main():
-    if DOWNLOAD_DATA:
-        download_politicians()
-
-    if SPLIT_DATA:
-        split_train_val(val_ratio=0.2, seed=42)
-
-    data_transforms, dataloaders, dataset_sizes, class_names, device = (
-        predprocessing_data(batch_size=BATCH_SIZE)
-    )
+    data_transforms, dataloaders, dataset_sizes, class_names, device = predprocessing_data(batch_size=BATCH_SIZE)
 
     print("Классы:", class_names)
     print("Размер выборок:", dataset_sizes)
 
-    model_conv, criterion, optimizer_conv, exp_lr_scheduler = (
-        initialize_model(
+    model_conv, criterion, optimizer_conv, exp_lr_scheduler = initialize_model(
             device,
             num_classes=len(class_names)
-        )
     )
 
     model_conv = train_model(
