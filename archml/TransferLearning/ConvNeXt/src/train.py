@@ -1,12 +1,44 @@
 import os
 import time
+from pathlib import Path
+import matplotlib.pyplot as plt
 import torch
 from tempfile import TemporaryDirectory
+
+
+def plot_metrics(train_losses, val_losses, train_accuracies, val_accuracies):
+    results_dir = Path(__file__).resolve().parent.parent / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    epochs = range(1, len(train_losses) + 1)
+
+    fig, ax = plt.subplots()
+    ax.plot(epochs, train_losses, label="Train Loss")
+    ax.plot(epochs, val_losses, label="Validation Loss")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Loss")
+    ax.set_title("Training and Validation Loss")
+    ax.legend()
+    fig.savefig(results_dir / "training_loss.png", bbox_inches="tight")
+    plt.close(fig)
+
+    fig, ax = plt.subplots()
+    ax.plot(epochs, [accuracy * 100 for accuracy in train_accuracies], label="Train Accuracy")
+    ax.plot(epochs, [accuracy * 100 for accuracy in val_accuracies], label="Validation Accuracy")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Accuracy (%)")
+    ax.set_title("Training and Validation Accuracy")
+    ax.legend()
+    fig.savefig(results_dir / "training_accuracy.png", bbox_inches="tight")
+    plt.close(fig)
 
 
 def train_model(model, criterion, optimizer, scheduler, dataloaders,
                 dataset_sizes, device, num_epochs=25):
     since = time.time()
+    train_losses = []
+    val_losses = []
+    train_accuracies = []
+    val_accuracies = []
 
     with TemporaryDirectory() as tempdir:
         best_model_params_path = os.path.join(tempdir, 'best_model_params.pt')
@@ -53,6 +85,13 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders,
 
                 print(f'{phase} Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
 
+                if phase == 'train':
+                    train_losses.append(epoch_loss)
+                    train_accuracies.append(epoch_acc.item())
+                else:
+                    val_losses.append(epoch_loss)
+                    val_accuracies.append(epoch_acc.item())
+
                 if phase == 'val' and epoch_acc > best_acc:
                     best_acc = epoch_acc
                     torch.save(model.state_dict(), best_model_params_path)
@@ -64,4 +103,5 @@ def train_model(model, criterion, optimizer, scheduler, dataloaders,
         print(f'Best val Acc: {best_acc:4f}')
 
         model.load_state_dict(torch.load(best_model_params_path, weights_only=True))
+    plot_metrics(train_losses, val_losses, train_accuracies, val_accuracies)
     return model
