@@ -25,4 +25,7 @@ Implementation of some fundamental machine learning models and algorithms in Pyt
 - [Clustering Algorithms](archml/ML_Clustering_Algorithms.ipynb) - Implementation KMeans, DBSCAN and applying Agglomerative Clustering and Gaussian Mixture Models.
 
 ### Deep Learning
-- [Transfer Learning](archml/TransferLearning/visualization/visualization.ipynb) - A model for recognizing the faces of politicians
+- [ResNet18](archml/TransferLearning/ResNet18/visualization/visualization.ipynb) - Transfer learning for classifying images of politicians.
+- [ConvNeXt](archml/TransferLearning/ConvNeXt/) - Material classification on the Flickr Material Database (FMD), with an optional ResNet18 configuration for comparison.
+
+Both projects use pretrained backbones with frozen parameters and train a new classification head.
